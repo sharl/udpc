@@ -25,8 +25,10 @@ class Server:
         self.queue = queue.Queue()
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # Windows does not have SO_REUSEPORT...
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        except AttributeError:
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((addr, port))
 
     def task(self, cmd):
